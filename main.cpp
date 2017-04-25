@@ -5,35 +5,85 @@
 
 using namespace std;
 
-int num_entradas= 4;
+const int num_entradas= 4;
+const int size_entrada = 3;
+const float t_apre = 0.5;
 
-int correct( float a[], float b[])
+float * pesos=  new float[size_entrada];
+float * t = new float[size_entrada];
+float *y = new float[num_entradas];
+bool flag= false;
+float ** entradas;
+
+bool correct( float a, float b)
 {
-	for (int j=0; j< num_entradas;j++)
-		if(a[j]!= b[j])
-			return j;
-		return -1;
+		if(a!= b)
+			return false;
+		return true;
+}
+void actualizar_pesos(int index)
+{
+	for (int i=0; i< size_entrada;i++)
+		{
+			//cout<<"index:"<<index<<endl;
+			pesos[i] += t_apre*(t[index]-y[index])*entradas[index][i];		}
+}
+int sigmod(float f)
+{
+	if(f<0.5)
+		return 0;
+	else
+		return 1;
+}
+void multiplicacion(float *pesos, float ** entradas)
+{
+	flag=true;
+	for (int i =0 ;i< num_entradas ; i++)
+	{
+		y[i]=0;
+		for (int j=0; j< size_entrada;j++)
+		{
+			y[i]+= entradas[i][j]*pesos[j];
+		}
+		y[i]=sigmod(y[i]);
+		if(y[i]!=t[i])
+		{
+			int g= i;
+			flag =false;
+			actualizar_pesos(g);
+		}
+	}
+	
+}
+
+void create()
+{
+	entradas = new float*[num_entradas];
+	for(int i =0;i<num_entradas;i++)
+		entradas[i]= new float[size_entrada];
+}
+
+void imprimir_vector(float *a, int tam)
+{
+	for (int j=0; j< tam;j++){		
+			cout<<a[j]<<" ";
+	}
+	cout<<endl;	
+}
+
+void imprimir_matriz(float ** b)
+{
+	for (int i=0; i< num_entradas;i++)
+	{
+		for (int j=0; j< size_entrada;j++)
+			cout<<b[i][j];
+		cout<<endl;
+	}	
 }
 
 int main()
 {
-
-	
-	int elem_entrada = 3;
-	float t_apre = 0.5;
-
-	float  pesos[elem_entrada];
-	float t[elem_entrada];
-	float y [num_entradas];
-
-	float ** entradas = new float*[num_entradas];
-
-	for (int i=0; i< num_entradas;i++)
-	{	
-		entradas[i]= new float[elem_entrada]; 
-	}
-	//llenando 
-
+	create();
 	entradas[0][0] =1;
 	entradas[0][1] =0;
 	entradas[0][2] =0;
@@ -55,73 +105,37 @@ int main()
 	t[2]=0;
 	t[3]=1;
 
+	pesos[0]=0;
+	pesos[1]=0;
+	pesos[2]=0;
 
-	pesos[0]=0.0;
-	pesos[1]=0.0;
-	pesos[2]=0.0;
-		//print 
-	for (int i=0; i< num_entradas;i++)
+	cout<<"entradas"<<endl;
+	
+	imprimir_matriz(entradas);
+
+
+	cout<<"esperados"<<endl;
+	
+		imprimir_vector(t,num_entradas);
+	cout<<"pesos"<<endl;
+		imprimir_vector(pesos,size_entrada);
+		
+	cout<<"result:"<<endl;
+		imprimir_vector(y,num_entradas);
+		flag=false;
+
+	int gh =0;
+	while (!flag)
 	{
-		for (int j=0; j< elem_entrada;j++)
-			cout<<entradas[i][j];
-		cout<<endl;
-	}	
-
-	/* multiplicacion matriz - vector */
-
-	for (int i =0 ;i< num_entradas ; i++)
-	{
-		y[i]=0;
-		for (int j=0; j< elem_entrada;j++)
-		{
-			y[i]+= entradas[i][j]*pesos[j];	
-		}
-	}
-
-	for (int j=0; j< num_entradas;j++){		
-			cout<<y[j]<<endl;
-		//cout<<endl;
-	}	
-	//compáracio 
-	int index = correct(y,t);
-	cout<<correct<<endl;
-	while (index > 0)
-	{
-
-		for (int i=0; i< elem_entrada;i++)
-		{
-				pesos[i] = t_apre*(t[index]-y[index])*entradas[index][i];
-			cout<<pesos[i]<<endl;
-		}
-
-		for (int i =0 ;i< num_entradas ; i++)
-		{
-			//y[i]=0.0;
-			for (int j=0; j< elem_entrada;j++)
-			{
-				y[i]+= entradas[i][j]*pesos[j];	
-				if(y[i]!=t[i])
-				{
-					for (int i=0; i< elem_entrada;i++)
-					{
-						pesos[i] = t_apre*(t[index]-y[index])*entradas[index][i];
-						cout<<pesos[i]<<endl;
-						//cout<<"se realizo"<<endl;
-					}
-			
-				}
-
-			}
-		}
-		index = correct(y,t);
-		cout<<"se realizo"<<endl;
-		//cout<<"sale"<<endl;*/
+		
+		cout<<"era: "<<gh<<endl;
+		multiplicacion(pesos,entradas);
+		cout<<"     nuevos pesos"<<endl;
+		imprimir_vector(pesos,size_entrada);
+		gh++;
 	} 
-
-	cout<<"termno"<<endl;
-
-	for(int i =0;i<3;i++)
-		cout<<pesos[i]<<endl;	
-
+	cout<<"result:"<<endl;
+		imprimir_vector(y,num_entradas);
+	//cout<<"termno"<<endl;
 	return 0;
 }

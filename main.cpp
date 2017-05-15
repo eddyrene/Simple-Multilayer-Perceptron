@@ -31,9 +31,9 @@ void actualizar_pesos(int index)
 int sigmod(float f)
 {
 	if(f<0.5)
-		return 0;
+		return 0.0;
 	else
-		return 1;
+		return 1.0;
 }
 void multiplicacion(float *pesos, float ** entradas)
 {
@@ -55,6 +55,7 @@ void multiplicacion(float *pesos, float ** entradas)
 	}
 	
 }
+
 
 void create()
 {

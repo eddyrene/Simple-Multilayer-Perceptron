@@ -1,14 +1,12 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 #include "layer.h"
-#include "weight.h"
 #include <cmath>
 
 class Network
 {
 private:
     vector<Layer*> * vectLayer;
-    Weight * vectWeight;
     int numCapas;
     int numOcultas, numSalidas, numEntradas;
     vector<double> VectOrders;
@@ -34,6 +32,8 @@ public:
     void printWeight();
     double sumSquareError();
     double getThreshold(){return threshold;}
+    int getNumEntradas(){return numEntradas;}
+    int getNumSalidas(){return numSalidas;}
 };
 
 #endif // NETWORK_H

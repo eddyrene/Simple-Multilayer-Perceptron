@@ -33,7 +33,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = percepMulti1.0.0
-DISTDIR = /home/mica/Área\ de\ Trabalho/TopIA/ia-lab/build-percepMulti-Desktop_Qt_5_8_0_GCC_64bit-Debug/.tmp/percepMulti1.0.0
+DISTDIR = /home/mica/Área\ de\ Trabalho/TopIA/resguardo/build-percepMulti-Desktop_Qt_5_8_0_GCC_64bit-Debug/.tmp/percepMulti1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/opt/Qt5.8.0/5.8/gcc_64/lib
 LIBS          = $(SUBLIBS) -llapack -lblas -larmadillo -L/opt/Qt5.8.0/5.8/gcc_64/lib -lQt5Core -lpthread 
@@ -51,11 +51,13 @@ OBJECTS_DIR   = ./
 SOURCES       = ../percepMulti/main.cpp \
 		../percepMulti/neuron.cpp \
 		../percepMulti/layer.cpp \
-		../percepMulti/network.cpp 
+		../percepMulti/network.cpp \
+		../percepMulti/weight.cpp 
 OBJECTS       = main.o \
 		neuron.o \
 		layer.o \
-		network.o
+		network.o \
+		weight.o
 DIST          = /opt/Qt5.8.0/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt5.8.0/5.8/gcc_64/mkspecs/common/unix.conf \
 		/opt/Qt5.8.0/5.8/gcc_64/mkspecs/common/linux.conf \
@@ -226,10 +228,12 @@ DIST          = /opt/Qt5.8.0/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt5.8.0/5.8/gcc_64/mkspecs/features/lex.prf \
 		../percepMulti/percepMulti.pro ../percepMulti/neuron.h \
 		../percepMulti/layer.h \
-		../percepMulti/network.h ../percepMulti/main.cpp \
+		../percepMulti/network.h \
+		../percepMulti/weight.h ../percepMulti/main.cpp \
 		../percepMulti/neuron.cpp \
 		../percepMulti/layer.cpp \
-		../percepMulti/network.cpp
+		../percepMulti/network.cpp \
+		../percepMulti/weight.cpp
 QMAKE_TARGET  = percepMulti
 DESTDIR       = 
 TARGET        = percepMulti
@@ -597,8 +601,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/Qt5.8.0/5.8/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../percepMulti/neuron.h ../percepMulti/layer.h ../percepMulti/network.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../percepMulti/main.cpp ../percepMulti/neuron.cpp ../percepMulti/layer.cpp ../percepMulti/network.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../percepMulti/neuron.h ../percepMulti/layer.h ../percepMulti/network.h ../percepMulti/weight.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../percepMulti/main.cpp ../percepMulti/neuron.cpp ../percepMulti/layer.cpp ../percepMulti/network.cpp ../percepMulti/weight.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -696,7 +700,8 @@ main.o: ../percepMulti/main.cpp /opt/Qt5.8.0/5.8/gcc_64/include/QtCore/QCoreAppl
 		/opt/Qt5.8.0/5.8/gcc_64/include/QtCore/qeventloop.h \
 		../percepMulti/network.h \
 		../percepMulti/layer.h \
-		../percepMulti/neuron.h
+		../percepMulti/neuron.h \
+		../percepMulti/weight.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../percepMulti/main.cpp
 
 neuron.o: ../percepMulti/neuron.cpp ../percepMulti/neuron.h
@@ -708,8 +713,12 @@ layer.o: ../percepMulti/layer.cpp ../percepMulti/layer.h \
 
 network.o: ../percepMulti/network.cpp ../percepMulti/network.h \
 		../percepMulti/layer.h \
-		../percepMulti/neuron.h
+		../percepMulti/neuron.h \
+		../percepMulti/weight.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o network.o ../percepMulti/network.cpp
+
+weight.o: ../percepMulti/weight.cpp ../percepMulti/weight.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o weight.o ../percepMulti/weight.cpp
 
 ####### Install
 

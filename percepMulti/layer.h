@@ -17,6 +17,7 @@ class Layer
         int size;
         int mfil,mcol;
         mat * matError;
+        mat * weightBias;
     public:
         Layer();
         Layer(int tam);
@@ -27,6 +28,8 @@ class Layer
         void  update(int a , int b);
         mat * getMatError();
         void setMatError(mat *m);
+        mat * getWeightBias();
+        void binarizacion();
         vector<Neuron *> * getVectNeuron();
 };
 

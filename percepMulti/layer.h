@@ -23,6 +23,7 @@ class Layer
         Layer(int tam);
         int getSize();
         void sigmod();
+        void sigmod2();
         mat * getMat();
         void setMat(mat &m);
         void  update(int a , int b);

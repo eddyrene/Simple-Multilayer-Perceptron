@@ -63,7 +63,26 @@ void Network::fill()
     }
 }
 
-void Network::init(vector<double> input, double expected, double err)
+void Network::init(vector<double> input, vector<double> expected, double err)
+{
+    //vectLayer->at(0)->getVectNeuron()->at(0)->setVal(1);
+
+    for(int i =0; i< numEntradas-1 ; i++)
+    {
+        vectLayer->at(0)->getVectNeuron()->at(i+1)->setVal(input[i]);
+    }
+    Y.clear();
+   // Y.push_back(1);
+    for(int i =0; i< numSalidas -1; i++)
+    {
+        //Y.push_back(expected);
+        Y.push_back(expected[i]);
+    }
+    threshold=err;
+
+}
+
+void Network::init2(vector<double> input, double expected, double err)
 {
     //vectLayer->at(0)->getVectNeuron()->at(0)->setVal(1);
 
@@ -116,16 +135,40 @@ void Network::forward()
        // cout<<"dimensiones A \n"<<neu->n_rows<<" "<<neu->n_cols<<endl;
        // cout<<"dimensiones B \n"<<wght->n_rows<<" "<<wght->n_cols<<endl;
         r = new mat((*neu)*(*wght));
-        cout<<"\nla entrada \n "<<*neu<<"\n los pesos \n "<<*wght<<"\n resultado \n "<<*r<<endl;
+      //  cout<<"\nla entrada \n "<<*neu<<"\n los pesos \n "<<*wght<<"\n resultado \n "<<*r<<endl;
     }
     matrixtoVectNeuron(r,vectLayer->at(vectLayer->size()-1)->getVectNeuron());
     vectLayer->at(vectLayer->size()-1)->sigmod();
     //vectLayer->at(vectLayer->size()-1)->binarizacion();
 }
+void Network::forward2()
+{
+    mat * r;
+    for(int i =0; i< vectLayer->size()-1; i++)
+    {
+        if(i!=0)
+        {
+            matrixtoVectNeuron(r,vectLayer->at(i)->getVectNeuron());
+            vectLayer->at(i)->sigmod();
+            // vectLayer->at(i)->binarizacion();
+        }
+        mat * neu=  vectNeurontoMatrix( vectLayer->at(i)->getVectNeuron());
+        mat * wght =  vectLayer->at(i)->getMat();
+        //cout<<"i ones \n"<<*wght<<endl;
+       // cout<<"dimensiones A \n"<<neu->n_rows<<" "<<neu->n_cols<<endl;
+       // cout<<"dimensiones B \n"<<wght->n_rows<<" "<<wght->n_cols<<endl;
+        r = new mat((*neu)*(*wght));
+      //  cout<<"\nla entrada \n "<<*neu<<"\n los pesos \n "<<*wght<<"\n resultado \n "<<*r<<endl;
+        //cout<<"\n resultado \n"<<*r<<endl;
+    }
+    matrixtoVectNeuron(r,vectLayer->at(vectLayer->size()-1)->getVectNeuron());
+    vectLayer->at(vectLayer->size()-1)->sigmod2();
+    //vectLayer->at(vectLayer->size()-1)->binarizacion();
+}
 
 void Network::backpropagation()
 {
-    cout<<"\n \n backpropagation \n \n"<<endl;
+   // cout<<"\n \n backpropagation \n \n"<<endl;
     for(int i =numCapas-1; i>= 0;i--)
     {
         vector<Neuron *> * VN= vectLayer->at(i)->getVectNeuron();
@@ -145,42 +188,40 @@ void Network::backpropagation()
               //  cout<<"y "<<Y[j]<<endl;
                 //cout<<"s "<<(VN->at(j)->getVal())* VN->at(j)->getVal()*( 1 - VN->at(j)->getVal())<<endl;
                 double a1= VN->at(j+1)->getVal();
-                cout<<"a1: "<<a1<<endl;
+                //cout<<"a1:      "<<a1<<endl;
                 E->at(j)=(Y[j]-a1)*a1*(1-a1);
                 //E->at(j)=(Y[j]-a1);
-                cout<<"Y"<<Y[j]<<endl;
+               // cout<<"Y"<<Y[j]<<endl;
             }
-            cout<<"\n primer error calculado \n "<<*E<<endl;
+          //  cout<<"\n primer error calculado \n "<<*E<<endl;
         }
         else
         {
             //cout<<"else"<<endl;
             mat * E = vectLayer->at(i+1)->getMatError();
-           cout<<"\n Este error debe coincidir con el anterior \n "<<*E<<endl;
+         //  cout<<"\n Este error debe coincidir con el anterior \n "<<*E<<endl;
             mat * weight = vectLayer->at(i)->getMat();
-           cout<<"\n Los pesos actuales \n "<<*weight<<endl;
+         //  cout<<"\n Los pesos actuales \n "<<*weight<<endl;
             mat * X = vectNeurontoMatrix( vectLayer->at(i)->getVectNeuron());
         //   cout<<"\n Las neruronas actuales \n "<<*X<<endl;
             //cout<<"X -- \n"<<(*X)<<" "<<trans(*X)<<" "<<X<<endl;
             //cout<<"E -- \n"<<*E<<" "<<E<<endl;
             //cout<<"W -- \n"<<*weight<<" "<<weight<<endl;
             *(weight) += ratioL*trans(*X)*(*E);
-             cout<<"\n Los nuevos pesos \n "<<*weight<<endl;
+         //    cout<<"\n Los nuevos pesos \n "<<*weight<<endl;
             if(i!=0)
             {
-                cout<<"\n Los nuevos pesos \n "<<*weight<<endl;
+               //cout<<"\n Los nuevos pesos \n "<<*weight<<endl;
                 mat * R = new mat((*E)*(trans(*weight)));
-                cout<<"R --\n"<< *R<<R<<endl;
+              // cout<<"R --\n"<< *R<<R<<endl;
                 mat * D = derVectNeuron(VN);
-                cout<<"D --\n"<< *D<<D<<endl;
+              //  cout<<"D --\n"<< *D<<D<<endl;
                 mat * S  = new mat((*D)%(*R));
-                cout<<"S recortado -- \n"<< *S<<S<<endl;
+              // cout<<"S recortado -- \n"<< *S<<S<<endl;
                 E=vectLayer->at(i)->getMatError();
                 for(int j = 0 ; j<E->n_cols ; j++)
                     E->at(j)= S->at(j+1);
-               // vectLayer->at(i)->setMatError(S);
-                //E=S;
-               cout<<"\n EL nuevo error: \n "<<*E<<endl;
+              // cout<<"\n EL nuevo error: \n "<<*E<<endl;
             }
         }
     }
@@ -207,10 +248,11 @@ double Network::sumSquareError()
     double r=0;
     for(int i =0;i< Y.size();i++ )
     {
+       // cout<<"Y"<<Y.at(i)<<" salida"<<vectLayer->at(numCapas-1)->getVectNeuron()->at(i+1)->getVal()<<endl;
         r += Y.at(i)-vectLayer->at(numCapas-1)->getVectNeuron()->at(i+1)->getVal();
         r= pow(r,2);
     }
-    printVector("La salida esperada es : \n ",Y);
+    //printVector("La salida esperada es : \n ",Y);
    return r;
 }
 
@@ -221,11 +263,11 @@ void Network::testSet(vector<double>  I, vector<double> O)
     {
         vectLayer->at(0)->getVectNeuron()->at(i+1)->setVal(I[i]);
     }
-    cout<<"\n La entrada  \n "<<endl;
+   /* cout<<"\n La entrada  \n "<<endl;
     for(auto k : *(vectLayer->at(0)->getVectNeuron()))
     {
         cout<<k->getVal()<<" ";
-    }
+    }*/
     Y.clear();
     Y.push_back(1);
     for(int i =0; i< numSalidas -1; i++)
@@ -261,7 +303,7 @@ void Network::testSet(vector<double>  I, vector<double> O)
     {
         cout<<k->getVal()<<" ";
     }
-    printVector("\n lo que debe salir \ n ",Y);
+    printVector("\n lo que debe salir \n",Y);
 }
 
 void Network::printAll()
@@ -288,20 +330,30 @@ vector<Layer*> * Network::getVectorLayers()
 
 mat *Network::vectNeurontoMatrix(vector<Neuron *> *v)
 {
-    mat * result;
-    result= new mat(1,v->size());
+    mat * res;
+    res= new mat(1,v->size(),fill::zeros);
+    //cout<<"zeros \n "<<*res<<endl;
+    //cout<<"tamano   "<<res->n_cols<<endl;
     for(int i =0 ; i< v->size(); i++)
     {
-        result->at(i) = v->at(i)->getVal();
+        double a = v->at(i)->getVal();
+        //cout<< "a" << a <<endl;
+        (*res)[i] =a;
+        //cout<< "b" << (*res)[i] <<endl;
     }
-    //cout<<"impriendo transformada \n "<<*result<<endl;
-    return result;
+
+    /*for(int i =0 ; i< v->size(); i++)
+        cout<<(*res)[i]<<" ";*/
+
+    //res->print();
+    //cout<<*res<<endl;
+    return res;
 }
 mat *Network::derVectNeuron(vector<Neuron *> *v)
 {
     mat * result;
     result= new mat(1,v->size());
-    cout<<"tam del vector a derivar "<<v->size()<<endl;
+    //cout<<"tam del vector a derivar "<<v->size()<<endl;
     for(int i =0 ; i< result->size(); i++)
     {
         double a1 = v->at(i)->getVal();

@@ -47,7 +47,8 @@ public:
     int getNumEntradas(){return numEntradas;}
     int getNumSalidas(){return numSalidas;}
     void testSet(vector<double>  I, vector<double> O);
-
+    void loadDataNumbers(string name, int a, vector< vector<double >> &training, vector< vector<double >> &test);
+    void loadDataFlowers(string name, int Es, vector< vector<double >> &training, vector< vector<double >> &test);
 };
 
 #endif // NETWORK_H

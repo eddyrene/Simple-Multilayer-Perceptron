@@ -103,7 +103,7 @@ void Network::init2(vector<double> input, double expected, double err)
 }
 void Network::printVector(string a, vector<double> t)
 {
-    cout<<a<<endl;
+    cout<<a;
     for(auto y : t)
         cout<<" "<<y;
 }
@@ -278,11 +278,6 @@ void Network::testSet(vector<double>  I, vector<double> O)
     {
         vectLayer->at(0)->getVectNeuron()->at(i+1)->setVal(I[i]);
     }
-   /* cout<<"\n La entrada  \n "<<endl;
-    for(auto k : *(vectLayer->at(0)->getVectNeuron()))
-    {
-        cout<<k->getVal()<<" ";
-    }*/
     Y.clear();
    // Y.push_back(1);
     for(int i =0; i< numSalidas -1; i++)
@@ -301,21 +296,109 @@ void Network::testSet(vector<double>  I, vector<double> O)
 
         mat * neu=  vectNeurontoMatrix( vectLayer->at(i)->getVectNeuron());
         mat * wght =  vectLayer->at(i)->getMat();
-        //cout<<"i ones \n"<<*wght<<endl;
-       // cout<<"dimensiones A \n"<<neu->n_rows<<" "<<neu->n_cols<<endl;
-       // cout<<"dimensiones B \n"<<wght->n_rows<<" "<<wght->n_cols<<endl;
         r = new mat((*neu)*(*wght));
        /// cout<<"\nla entrada \n "<<*neu<<"\n los pesos \n "<<*wght<<"\n resultado \n "<<*r<<endl;
     }
     matrixtoVectNeuron(r,vectLayer->at(vectLayer->size()-1)->getVectNeuron());
     int pos =vectLayer->size()-1;
     vectLayer->at(pos)->sigmod();
-    cout<<"\n  imprimiendo salida \n "<<endl;
+   // cout<<"\n  imprimiendo salida \n "<<endl;
+    cout<<"\n";
     for(auto k : *(vectLayer->at(pos)->getVectNeuron()))
     {
         cout<<k->getVal()<<" ";
     }
-    printVector("\n lo que debe salir \n",Y);
+
+    printVector("     Esperado     ",Y);
+}
+
+void Network::loadDataNumbers(string name, int a, vector< vector<double >> &training, vector< vector<double >> &test)
+{
+    training.resize(a);
+    for(int i = 0 ; i< a ;i++)
+        training[i].resize(getNumEntradas()-1);
+
+    test.resize(a);
+    for(int i = 0 ; i< a ;i++)
+        test[i].resize(getNumSalidas()-1);
+
+    /*for(int i=0;i<outputs.size();i++)
+        for(int j=0; j<outputs[i].size();j++)
+        {
+            outputs[i][j]=0;
+        }*/
+    cout<<"imput  "<<training.size()<<endl;
+    cout<<"output  "<<test.size()<<endl;
+
+    ifstream file(name);
+    int m=0;
+    string line;
+
+    while(getline(file,line) )
+    {
+        int n=0;
+        bool flag= false;
+        std::stringstream   linestream(line);
+        std::string         value;
+        //cout<<"entro"<<endl;
+        while(getline(linestream,value,','))
+        {
+            double v = atoi(value.c_str());
+            double vv=v/255;
+            //double vv= v;
+             if(!flag)
+             {
+                 test[m][v]=1;
+                 flag=true;
+             }
+             else
+             {
+                 cout<<"float "<<v<<endl;
+                 training[m][n]=v;
+                 n++;
+             }
+        }
+       // std::cout << "Line Finished" << std::endl;
+     m++;
+    }
+    //my_net->printMat("\n Training: \n", inputs);
+    //my_net->printMat("\n Expected: \n", outputs);
+    cout<<"terminó de leer con exito"<<endl;
+}
+
+void Network::loadDataFlowers(string name, int Es, vector<vector<double> > &training, vector<vector<double> > &test)
+{
+    training.resize(Es);
+    for(int i = 0 ; i< Es ;i++)
+        training[i].resize(getNumEntradas()-1);
+
+    test.resize(Es);
+    for(int i = 0 ; i< Es ;i++)
+        test[i].resize(getNumSalidas()-1);
+
+    cout<<"imput"<<training.size()<<endl;
+    cout<<"output"<<test.size()<<endl;
+    float e1, e2,e3,e4;
+    string s1;
+    ifstream file(name);
+    int m=0;
+    while(!file.eof())
+    {
+        file>>e1>>e2>>e3>>e4>>s1;
+        if(s1=="") break;
+        training[m][0]= e1;
+        training[m][1]= e2;
+        training[m][2]= e3;
+        training[m][3]= e4;
+        for(int i =0 ;i<s1.size();i++)
+        {
+            test[m][i]=s1[i]-'0';
+        }
+        m++;
+    }
+    printMat("\n Training: \n", training);
+    printMat("\n Expected: \n", test);
+    cout<<"leyo"<<endl;
 }
 
 void Network::printAll()

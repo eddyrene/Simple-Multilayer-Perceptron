@@ -48,11 +48,13 @@ OBJECTS_DIR   = ./
 SOURCES       = ../percepMulti/main.cpp \
 		../percepMulti/neuron.cpp \
 		../percepMulti/layer.cpp \
-		../percepMulti/network.cpp 
+		../percepMulti/network.cpp \
+		../percepMulti/weight.cpp 
 OBJECTS       = main.o \
 		neuron.o \
 		layer.o \
-		network.o
+		network.o \
+		weight.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/shell-unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -95,7 +97,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
-		../percepMulti/.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf \
@@ -190,7 +191,6 @@ Makefile: ../percepMulti/percepMulti.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/l
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf \
@@ -253,7 +253,6 @@ Makefile: ../percepMulti/percepMulti.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/l
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf:
-.qmake.stash:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf:
@@ -280,7 +279,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/percepMulti1.0.0 || mkdir -p .tmp/percepMulti1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/percepMulti1.0.0/ && $(COPY_FILE) --parents ../percepMulti/neuron.h ../percepMulti/layer.h ../percepMulti/network.h .tmp/percepMulti1.0.0/ && $(COPY_FILE) --parents ../percepMulti/main.cpp ../percepMulti/neuron.cpp ../percepMulti/layer.cpp ../percepMulti/network.cpp .tmp/percepMulti1.0.0/ && (cd `dirname .tmp/percepMulti1.0.0` && $(TAR) percepMulti1.0.0.tar percepMulti1.0.0 && $(COMPRESS) percepMulti1.0.0.tar) && $(MOVE) `dirname .tmp/percepMulti1.0.0`/percepMulti1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/percepMulti1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/percepMulti1.0.0/ && $(COPY_FILE) --parents ../percepMulti/neuron.h ../percepMulti/layer.h ../percepMulti/network.h ../percepMulti/weight.h .tmp/percepMulti1.0.0/ && $(COPY_FILE) --parents ../percepMulti/main.cpp ../percepMulti/neuron.cpp ../percepMulti/layer.cpp ../percepMulti/network.cpp ../percepMulti/weight.cpp .tmp/percepMulti1.0.0/ && (cd `dirname .tmp/percepMulti1.0.0` && $(TAR) percepMulti1.0.0.tar percepMulti1.0.0 && $(COMPRESS) percepMulti1.0.0.tar) && $(MOVE) `dirname .tmp/percepMulti1.0.0`/percepMulti1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/percepMulti1.0.0
 
 
 clean:compiler_clean 
@@ -378,7 +377,8 @@ main.o: ../percepMulti/main.cpp /usr/include/qt5/QtCore/QCoreApplication \
 		/usr/include/qt5/QtCore/qeventloop.h \
 		../percepMulti/network.h \
 		../percepMulti/layer.h \
-		../percepMulti/neuron.h
+		../percepMulti/neuron.h \
+		../percepMulti/weight.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../percepMulti/main.cpp
 
 neuron.o: ../percepMulti/neuron.cpp ../percepMulti/neuron.h
@@ -390,8 +390,12 @@ layer.o: ../percepMulti/layer.cpp ../percepMulti/layer.h \
 
 network.o: ../percepMulti/network.cpp ../percepMulti/network.h \
 		../percepMulti/layer.h \
-		../percepMulti/neuron.h
+		../percepMulti/neuron.h \
+		../percepMulti/weight.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o network.o ../percepMulti/network.cpp
+
+weight.o: ../percepMulti/weight.cpp ../percepMulti/weight.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o weight.o ../percepMulti/weight.cpp
 
 ####### Install
 

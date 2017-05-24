@@ -6,15 +6,15 @@ using namespace std;
 
 int main()
 {
-    Network * my_net = new Network(4,4,6,3); // numcapas, numInput, numHidden, numOutput
+    Network * my_net = new Network(3,4,8,3); // numcapas, numInput, numHidden, numOutput
     my_net->printVector("imprimiendo pesos", my_net->getVectorOrders());
     vector< vector<double >> inputs, outputs;
-    int Es=120;
-    my_net->loadDataFlowers("iris.txt", Es, inputs, outputs);
+    int Es=90;
+    my_net->loadDataFlowers("irisN.txt", Es, inputs, outputs);
     vector<double> FinalErrors;
     int times=0;
     bool flag =true;
-    while((flag==true) && (times <6000))
+    while((flag==true) && (times <10000))
     {
         cout<<"###########################"<< times <<"#################################"""<<endl;
         FinalErrors.clear();
@@ -22,13 +22,13 @@ int main()
         double delta=1000;
         for(int i=0 ;i<Es; i++)
         {
-            double t=0.1;
+            double t=0.00001;
             my_net->init(inputs[i],outputs[i], t);
             //cout<<"entrada:  "<< i << "   ****  era ***  "<<era<<endl;
             my_net->forward();
             delta=my_net->sumSquareError();
             //cout<<"SumsquareError de la capa:"<<delta<<endl;
-            if(delta>0.001)
+            if(delta>0.000001)
                 my_net->backpropagation();
             //my_net->forward();
             //cout<<"i "<<i<<" u  "<<delta<<endl;
@@ -49,9 +49,9 @@ int main()
         times++;
    }
     cout<<"%%%%%%%%%%%%%%%%%% TEST %%%%%%%%%%%%%%"<<endl;
-    int Test =30;
+    int Test =60;
     vector< vector<double >> I, O;
-    my_net->loadDataFlowers("test.txt", Test, I, O);
+    my_net->loadDataFlowers("testIrisN.txt", Test, I, O);
     my_net->printMat("\n Entrada: \n", I);
     my_net->printMat("\n Salidas: \n", O);
     for(int i=0 ;i<Test; i++)

@@ -4,7 +4,6 @@ Network::Network()
 {
 
 }
-
 Network::Network(int capas, int entradas, int ocultas, int salidas)
 {
     numCapas= capas;
@@ -24,6 +23,40 @@ Network::Network(int capas, int entradas, int ocultas, int salidas)
         //cout<<"hidden"<<endl;
         vectLayer->push_back(m);
         VectOrders.push_back(numOcultas);
+    }
+    // capa salida
+    vectLayer->push_back(l);
+    VectOrders.push_back(numSalidas);
+    fill();
+    createWeights();
+    ratioL=1;
+}
+
+Network::Network(int capas, int entradas, vector<int> ocultas, int salidas)
+{
+    //cout<<"salio"<<endl;
+    numCapas= capas;
+    //numOcultas= ocultas+1;
+    numEntradas= entradas+1;
+    numSalidas= salidas+1;
+    vectLayer = new vector<Layer *>();
+    //capa de entrada
+    Layer * e = new Layer(numEntradas);
+    Layer * l =new Layer(numSalidas);
+    vectLayer->push_back(e);
+    VectOrders.push_back(numEntradas);
+    //capas intermedias
+    vectOcultas=ocultas;
+    for(auto a :vectOcultas )
+    {
+        a++;  cout<<"vectOcultas"<<a<<endl;
+    }
+    cout<<"tam  "<<vectOcultas.size();
+    for(int i =0 ;i<ocultas.size(); i++ )
+    {
+        Layer * m = new Layer(ocultas[i]);
+        vectLayer->push_back(m);
+        VectOrders.push_back(ocultas[i]);
     }
     // capa salida
     vectLayer->push_back(l);
@@ -54,7 +87,7 @@ void Network::fill()
     {
        // cout<<"capa: "<<i<<endl;
         //Layer * hidden = vectLayer->at(i);
-        for(int j=0; j < numOcultas ; j++)
+        for(int j=0; j < vectOcultas[i-1] ; j++)
         {
             Neuron * n = new Neuron(-1);
             vectLayer->at(i)->getVectNeuron()->at(j)=n;
@@ -66,13 +99,11 @@ void Network::fill()
 void Network::init(vector<double> input, vector<double> expected, double err)
 {
     //vectLayer->at(0)->getVectNeuron()->at(0)->setVal(1);
-
     for(int i =0; i< numEntradas-1 ; i++)
     {
         vectLayer->at(0)->getVectNeuron()->at(i+1)->setVal(input[i]);
     }
     Y.clear();
-   // Y.push_back(1);
     for(int i =0; i< numSalidas -1; i++)
     {
         //Y.push_back(expected);
@@ -121,13 +152,14 @@ void Network::printMat(string a, vector<vector<double> > M)
 void Network::forward()
 {
     mat * r;
+   // cout<<"numero de capas "<<vectLayer->size()-1<<endl;
     for(int i =0; i< vectLayer->size()-1; i++)
     {
+       // cout<<"faefa "<<i<<endl;
         if(i!=0)
         {
             matrixtoVectNeuron(r,vectLayer->at(i)->getVectNeuron());
             vectLayer->at(i)->sigmod();
-            // vectLayer->at(i)->binarizacion();
         }
         mat * neu=  vectNeurontoMatrix( vectLayer->at(i)->getVectNeuron());
         mat * wght =  vectLayer->at(i)->getMat();
@@ -135,12 +167,11 @@ void Network::forward()
        // cout<<"dimensiones A \n"<<neu->n_rows<<" "<<neu->n_cols<<endl;
        // cout<<"dimensiones B \n"<<wght->n_rows<<" "<<wght->n_cols<<endl;
         r = new mat((*neu)*(*wght));
-      //  cout<<"\nla entrada \n "<<*neu<<"\n los pesos \n "<<*wght<<"\n resultado \n "<<*r<<endl;
+       // cout<<"\nla entrada \n "<<*neu<<"\n los pesos \n "<<*wght<<"\n resultado \n "<<*r<<endl;
     }
     matrixtoVectNeuron(r,vectLayer->at(vectLayer->size()-1)->getVectNeuron());
     vectLayer->at(vectLayer->size()-1)->sigmod();
     delete r;
-    //vectLayer->at(vectLayer->size()-1)->binarizacion();
 }
 void Network::forward2()
 {
@@ -279,7 +310,6 @@ void Network::testSet(vector<double>  I, vector<double> O)
         vectLayer->at(0)->getVectNeuron()->at(i+1)->setVal(I[i]);
     }
     Y.clear();
-   // Y.push_back(1);
     for(int i =0; i< numSalidas -1; i++)
     {
         Y.push_back(O[i]);
@@ -308,7 +338,6 @@ void Network::testSet(vector<double>  I, vector<double> O)
     {
         cout<<k->getVal()<<" ";
     }
-
     printVector("     Esperado     ",Y);
 }
 
@@ -371,7 +400,6 @@ void Network::loadDataFlowers(string name, int Es, vector<vector<double> > &trai
     training.resize(Es);
     for(int i = 0 ; i< Es ;i++)
         training[i].resize(getNumEntradas()-1);
-
     test.resize(Es);
     for(int i = 0 ; i< Es ;i++)
         test[i].resize(getNumSalidas()-1);
@@ -398,7 +426,18 @@ void Network::loadDataFlowers(string name, int Es, vector<vector<double> > &trai
     }
     printMat("\n Training: \n", training);
     printMat("\n Expected: \n", test);
-    cout<<"leyo"<<endl;
+    cout<<"leyó"<<endl;
+}
+
+void Network::normalize(vector<vector<double> > &A, vector<vector<double> > B)
+{
+    for(int i=0;i<B.size();i++)
+    {
+        for(int j=0;j<B[i].size();j++)
+        {
+
+        }
+    }
 }
 
 void Network::printAll()

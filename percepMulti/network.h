@@ -9,18 +9,16 @@ private:
     vector<Layer*> * vectLayer;
     int numCapas;
     int numOcultas, numSalidas, numEntradas;
+    vector<int> vectOcultas;
     vector<double> VectOrders;
     vector<double> Y;
     //vector<vector<double> > Y;
-    //vector<double> E;
     double threshold;
     double ratioL;
-    vector<vector<double > > imputs;
-    vector<double > outputs;
-
 public:
     Network();
-    Network(int capas, int entradas, int tamcapa,  int salida );
+    Network(int capas, int entradas, int ocultas,  int salida );
+    Network(int capas, int entradas, vector<int> ocultas,  int salida );
     void fill();
     void init(vector<double> input, vector<double> expected , double err);
     void init2(vector<double> input, double expected , double err);
@@ -29,9 +27,7 @@ public:
     void printMat(string a, vector<vector<double> > M);
     void forward();
     void forward2();
-    void forwardBias();
     void backpropagation();
-    void backpropagationBias();
     void createWeights();
     void printAll();
     vector<double> getVectorOrders();
@@ -46,6 +42,7 @@ public:
     void testSet(vector<double>  I, vector<double> O);
     void loadDataNumbers(string name, int a, vector< vector<double >> &training, vector< vector<double >> &test);
     void loadDataFlowers(string name, int Es, vector< vector<double >> &training, vector< vector<double >> &test);
+    void normalize(vector<vector<double>> & A , vector<vector<double>> B);
 };
 
 #endif // NETWORK_H

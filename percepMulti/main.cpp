@@ -6,7 +6,9 @@ using namespace std;
 
 int main()
 {
-    Network * my_net = new Network(3,4,8,3); // numcapas, numInput, numHidden, numOutput
+    vector<int> hidden; hidden.push_back(8);hidden.push_back(6);//hidden.push_back(4);
+    //Network * my_net = new Network(3,4,8,3);
+    Network * my_net = new Network(4,4,hidden,3);
     my_net->printVector("imprimiendo pesos", my_net->getVectorOrders());
     vector< vector<double >> inputs, outputs;
     int Es=90;
@@ -14,7 +16,7 @@ int main()
     vector<double> FinalErrors;
     int times=0;
     bool flag =true;
-    while((flag==true) && (times <10000))
+    while((flag==true) && (times <6000))
     {
         cout<<"###########################"<< times <<"#################################"""<<endl;
         FinalErrors.clear();
@@ -31,7 +33,6 @@ int main()
             if(delta>0.000001)
                 my_net->backpropagation();
             //my_net->forward();
-            //cout<<"i "<<i<<" u  "<<delta<<endl;
             FinalErrors.push_back(delta);
             era++;
         }

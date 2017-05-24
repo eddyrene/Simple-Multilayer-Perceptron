@@ -6,13 +6,11 @@ using namespace std;
 
 int main()
 {
-   Network * my_net = new Network(5,784,15,10); // numcapas, numInput, numHidden, numOutput
+   Network * my_net = new Network(4,784,30,10); // numcapas, numInput, numHidden, numOutput
    my_net->printVector("imprimiendo pesos", my_net->getVectorOrders());
    //vector< vector<double >> imputs, outputs;
-
    int Es =100;
    vector< vector<double >> inputs, outputs;
-
    inputs.resize(Es);
    for(int i = 0 ; i< Es ;i++)
        inputs[i].resize(my_net->getNumEntradas()-1);
@@ -50,25 +48,24 @@ int main()
             }
             else
             {
-                cout<<"float "<<vv<<endl;
-                inputs[m][n]=vv;
+                cout<<"float "<<v<<endl;
+                inputs[m][n]=v;
                 n++;
             }
-
        }
       // std::cout << "Line Finished" << std::endl;
     m++;
    }
-   my_net->printMat("\n Training: \n", inputs);
-   my_net->printMat("\n Expected: \n", outputs);
+   //my_net->printMat("\n Training: \n", inputs);
+   //my_net->printMat("\n Expected: \n", outputs);
    cout<<"leyo"<<endl;
    vector<double> FinalErrors;
    int times=0;
    bool flag =true;
 
-  while(flag)
+  while((flag==true) && (times <3000))
   {
-     // cout<<"###########################"<< times <<"#################################"""<<endl;
+      cout<<"###########################"<< times <<"#################################"""<<endl;
       FinalErrors.clear();
       int era=0;
       for(int i=0 ;i<Es; i++)
@@ -84,9 +81,10 @@ int main()
                    //cout<<"entrada:  "<< i << "   ****  era ***  "<<era<<endl;
                    my_net->forward();
                    delta=my_net->sumSquareError();
-                   if(delta>0.1)
+                   //cout<<"SumsquareError de la capa:"<<delta<<endl;
+                   //if(delta>0.001)
                        my_net->backpropagation();
-                   //cout<<"el error es :"<<delta/2<<endl;
+
                    //my_net->forward();
                    //cout<<"i "<<i<<" u  "<<delta<<endl;
                    FinalErrors.push_back(delta);
@@ -101,9 +99,9 @@ int main()
           // cout<<"  -  "<<FinalErrors[qw]<<endl;
            sum+=FinalErrors[qw];
        }
-       //cout<<"====primer sum"<< sum <<endl;
+       //cout<<" solo la sumatoria  "<< sum <<" El tamño del vector"<<FinalErrors.size()<<endl;
        sum = sum / FinalErrors.size();
-       if(sum < 0.5)
+       if(sum < 0.01)
            flag=false;
        cout<<"*********acumulado MENOR AL FLAG **** \n "<<sum<<endl;
        times++;
@@ -145,18 +143,18 @@ int main()
             }
             else
             {
-                I[mm][nn]=vv;
+                I[mm][nn]=v;
                 nn++;
             }
        }
        //std::cout << "Line Finished" << std::endl;
     mm++;
    }
-    //my_net->printMat("\n Entrada: \n", I);
+    my_net->printMat("\n Entrada: \n", I);
     my_net->printMat("\n Salidas: \n", O);
    for(int i=0 ;i<Test; i++)
    {
-        // my_net->testSet(I[0],O[0]);
+     // my_net->testSet(I[i],O[i]);
       my_net->init(I[i],O[i], 0.1);
       my_net->forward2();
        //my_net->forward();

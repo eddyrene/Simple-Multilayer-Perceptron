@@ -56,6 +56,7 @@ void Layer::sigmod2()
         cout<<vectNeuron->at(i)->getVal()<<"  ";
     }
 
+
     cout<<endl;
 }
 void Layer::binarizacion()

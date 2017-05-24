@@ -30,7 +30,7 @@ Network::Network(int capas, int entradas, int ocultas, int salidas)
     VectOrders.push_back(numSalidas);
     fill();
     createWeights();
-    ratioL=0.5;
+    ratioL=1;
 }
 
 void Network::fill()
@@ -40,7 +40,7 @@ void Network::fill()
      Layer * out= vectLayer->at(numCapas-1);
     for(int i =0; i< numEntradas ; i++)
     {
-        Neuron * n = new Neuron(1);
+        Neuron * n = new Neuron(-1);
         in->getVectNeuron()->at(i)= n;
         //cout<<"##"<<in->getVectNeuron()->at(i)->getVal()<<endl;
     }
@@ -56,7 +56,7 @@ void Network::fill()
         //Layer * hidden = vectLayer->at(i);
         for(int j=0; j < numOcultas ; j++)
         {
-            Neuron * n = new Neuron(1);
+            Neuron * n = new Neuron(-1);
             vectLayer->at(i)->getVectNeuron()->at(j)=n;
           //  cout<<"%%%%%"<<vectLayer->at(i)->getVectNeuron()->at(j)->getVal()<<endl;
         }
@@ -139,6 +139,7 @@ void Network::forward()
     }
     matrixtoVectNeuron(r,vectLayer->at(vectLayer->size()-1)->getVectNeuron());
     vectLayer->at(vectLayer->size()-1)->sigmod();
+    delete r;
     //vectLayer->at(vectLayer->size()-1)->binarizacion();
 }
 void Network::forward2()
@@ -163,6 +164,15 @@ void Network::forward2()
     }
     matrixtoVectNeuron(r,vectLayer->at(vectLayer->size()-1)->getVectNeuron());
     vectLayer->at(vectLayer->size()-1)->sigmod2();
+    //printVector("Vector Final ");
+    delete r;
+
+    int pos =vectLayer->size()-1;
+    cout<<"\n  imprimiendo salida \n "<<endl;
+    for(auto k : *(vectLayer->at(pos)->getVectNeuron()))
+    {
+        cout<<k->getVal()<<" ";
+    }
     //vectLayer->at(vectLayer->size()-1)->binarizacion();
 }
 
@@ -221,9 +231,13 @@ void Network::backpropagation()
                 E=vectLayer->at(i)->getMatError();
                 for(int j = 0 ; j<E->n_cols ; j++)
                     E->at(j)= S->at(j+1);
+                delete R;
+                delete D;
+                delete S;
               // cout<<"\n EL nuevo error: \n "<<*E<<endl;
             }
         }
+
     }
 }
 
@@ -248,17 +262,18 @@ double Network::sumSquareError()
     double r=0;
     for(int i =0;i< Y.size();i++ )
     {
-       // cout<<"Y"<<Y.at(i)<<" salida"<<vectLayer->at(numCapas-1)->getVectNeuron()->at(i+1)->getVal()<<endl;
-        r += Y.at(i)-vectLayer->at(numCapas-1)->getVectNeuron()->at(i+1)->getVal();
-        r= pow(r,2);
+        double Esp= Y.at(i);
+        double Last =vectLayer->at(numCapas-1)->getVectNeuron()->at(i+1)->getVal();
+        //cout<<"Esperado "<<Y.at(i)<<" Ultima capa "<<vectLayer->at(numCapas-1)->getVectNeuron()->at(i+1)->getVal()<<endl;
+        r += pow(Esp-Last,2);
+        //r= pow(r,2);
     }
     //printVector("La salida esperada es : \n ",Y);
-   return r;
+   return r/2;
 }
 
 void Network::testSet(vector<double>  I, vector<double> O)
 {
-
     for(int i =0; i< numEntradas-1 ; i++)
     {
         vectLayer->at(0)->getVectNeuron()->at(i+1)->setVal(I[i]);
@@ -269,12 +284,11 @@ void Network::testSet(vector<double>  I, vector<double> O)
         cout<<k->getVal()<<" ";
     }*/
     Y.clear();
-    Y.push_back(1);
+   // Y.push_back(1);
     for(int i =0; i< numSalidas -1; i++)
     {
         Y.push_back(O[i]);
     }
-
     mat * r;
     for(int i =0; i< vectLayer->size()-1; i++)
     {
@@ -291,14 +305,12 @@ void Network::testSet(vector<double>  I, vector<double> O)
        // cout<<"dimensiones A \n"<<neu->n_rows<<" "<<neu->n_cols<<endl;
        // cout<<"dimensiones B \n"<<wght->n_rows<<" "<<wght->n_cols<<endl;
         r = new mat((*neu)*(*wght));
-
        /// cout<<"\nla entrada \n "<<*neu<<"\n los pesos \n "<<*wght<<"\n resultado \n "<<*r<<endl;
     }
     matrixtoVectNeuron(r,vectLayer->at(vectLayer->size()-1)->getVectNeuron());
     int pos =vectLayer->size()-1;
     vectLayer->at(pos)->sigmod();
-
-    cout<<"imprimiendo salida"<<endl;
+    cout<<"\n  imprimiendo salida \n "<<endl;
     for(auto k : *(vectLayer->at(pos)->getVectNeuron()))
     {
         cout<<k->getVal()<<" ";

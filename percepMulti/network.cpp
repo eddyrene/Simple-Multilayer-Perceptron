@@ -427,15 +427,30 @@ void Network::loadDataFlowers(string name, int Es, vector<vector<double> > &trai
     printMat("\n Training: \n", training);
     printMat("\n Expected: \n", test);
     cout<<"leyó"<<endl;
+
 }
 
 void Network::normalize(vector<vector<double> > &A, vector<vector<double> > B)
 {
-    for(int i=0;i<B.size();i++)
-    {
-        for(int j=0;j<B[i].size();j++)
-        {
+    A.resize(B.size());
+    for(int i = 0 ; i< B.size() ;i++)
+        A[i].resize(B[i].size());
 
+    cout<<A.size()<<" "<<A[5].size()<<endl;
+    for(int j=0;j<B[0].size();j++)
+    {
+        vector<double> V;
+        for(int i=0;i<B.size();i++)
+        {
+            V.push_back(B[i][j]);
+        }
+        //cout<<"size v"<<V.size()<<endl;
+        double max = *max_element(V.begin(),V.end());
+        double min = *min_element(V.begin(),V.end());
+        //cout<<"max  "<< max <<"min  "<<min<<endl;
+        for(int i=0;i<B.size();i++)
+        {
+            A[i][j]= (B[i][j]-min)/(max-min);
         }
     }
 }

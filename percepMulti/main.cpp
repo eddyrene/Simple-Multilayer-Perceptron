@@ -10,9 +10,11 @@ int main()
     //Network * my_net = new Network(3,4,8,3);
     Network * my_net = new Network(4,4,hidden,3);
     my_net->printVector("imprimiendo pesos", my_net->getVectorOrders());
-    vector< vector<double >> inputs, outputs;
-    int Es=90;
-    my_net->loadDataFlowers("irisN.txt", Es, inputs, outputs);
+    vector< vector<double >> inputs, outputs, IN;
+    int Es=120;
+    my_net->loadDataFlowers("irisTraining.txt", Es, inputs, outputs);
+    my_net->normalize(IN, inputs);
+    my_net->printMat("Entrada normalizada \n ", IN);
     vector<double> FinalErrors;
     int times=0;
     bool flag =true;
@@ -25,7 +27,7 @@ int main()
         for(int i=0 ;i<Es; i++)
         {
             double t=0.00001;
-            my_net->init(inputs[i],outputs[i], t);
+            my_net->init(IN[i],outputs[i], t);
             //cout<<"entrada:  "<< i << "   ****  era ***  "<<era<<endl;
             my_net->forward();
             delta=my_net->sumSquareError();
@@ -50,14 +52,15 @@ int main()
         times++;
    }
     cout<<"%%%%%%%%%%%%%%%%%% TEST %%%%%%%%%%%%%%"<<endl;
-    int Test =60;
-    vector< vector<double >> I, O;
-    my_net->loadDataFlowers("testIrisN.txt", Test, I, O);
-    my_net->printMat("\n Entrada: \n", I);
+    int Test =30;
+    vector< vector<double >> I, O, NIT;
+    my_net->loadDataFlowers("irisTest.txt", Test, I, O);
+    my_net->normalize(NIT, I);
+    my_net->printMat("\n Entrada: \n", NIT);
     my_net->printMat("\n Salidas: \n", O);
     for(int i=0 ;i<Test; i++)
     {
-         my_net->testSet(I[i],O[i]);
+         my_net->testSet(NIT[i],O[i]);
     }
 }
 

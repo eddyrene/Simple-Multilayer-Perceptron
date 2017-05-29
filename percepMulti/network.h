@@ -43,6 +43,7 @@ public:
     void loadDataNumbers(string name, int a, vector< vector<double >> &training, vector< vector<double >> &test);
     void loadDataFlowers(string name, int Es, vector< vector<double >> &training, vector< vector<double >> &test);
     void normalize(vector<vector<double>> & A , vector<vector<double>> B);
+    void normalizeIMG(vector<vector<double>> & A , vector<vector<double>> B);
 };
 
 #endif // NETWORK_H

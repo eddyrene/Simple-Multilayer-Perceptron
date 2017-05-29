@@ -51,19 +51,20 @@ Network::Network(int capas, int entradas, vector<int> ocultas, int salidas)
     {
         a++;  cout<<"vectOcultas"<<a<<endl;
     }
+
     cout<<"tam  "<<vectOcultas.size();
     for(int i =0 ;i<ocultas.size(); i++ )
     {
-        Layer * m = new Layer(ocultas[i]);
+        Layer * m = new Layer(ocultas[i]+1);
         vectLayer->push_back(m);
-        VectOrders.push_back(ocultas[i]);
+        VectOrders.push_back(ocultas[i]+1);
     }
     // capa salida
     vectLayer->push_back(l);
     VectOrders.push_back(numSalidas);
     fill();
     createWeights();
-    ratioL=1;
+    ratioL=0.001;
 }
 
 void Network::fill()
@@ -87,7 +88,7 @@ void Network::fill()
     {
        // cout<<"capa: "<<i<<endl;
         //Layer * hidden = vectLayer->at(i);
-        for(int j=0; j < vectOcultas[i-1] ; j++)
+        for(int j=0; j < vectOcultas[i-1]+1; j++)
         {
             Neuron * n = new Neuron(-1);
             vectLayer->at(i)->getVectNeuron()->at(j)=n;
@@ -362,7 +363,6 @@ void Network::loadDataNumbers(string name, int a, vector< vector<double >> &trai
     ifstream file(name);
     int m=0;
     string line;
-
     while(getline(file,line) )
     {
         int n=0;
@@ -382,8 +382,8 @@ void Network::loadDataNumbers(string name, int a, vector< vector<double >> &trai
              }
              else
              {
-                 cout<<"float "<<v<<endl;
-                 training[m][n]=v;
+                 //cout<<"float "<<v<<endl;
+                 training[m][n]=vv;
                  n++;
              }
         }
@@ -451,6 +451,38 @@ void Network::normalize(vector<vector<double> > &A, vector<vector<double> > B)
         for(int i=0;i<B.size();i++)
         {
             A[i][j]= (B[i][j]-min)/(max-min);
+            if(max==min)
+                A[i][j]=B[i][j];
+
+        }
+    }
+}
+
+void Network::normalizeIMG(vector<vector<double> > &A, vector<vector<double> > B)
+{
+
+    A.resize(B.size());
+    for(int i = 0 ; i< B.size() ;i++)
+        A[i].resize(B[i].size());
+
+    cout<<A.size()<<" "<<A[5].size()<<endl;
+    for(int j=0;j<B[0].size();j++)
+    {
+        vector<double> V;
+        for(int i=0;i<B.size();i++)
+        {
+            V.push_back(B[i][j]);
+        }
+        //cout<<"size v"<<V.size()<<endl;
+        double max = *max_element(V.begin(),V.end());
+        double min = *min_element(V.begin(),V.end());
+        //cout<<"max  "<< max <<"min  "<<min<<endl;
+        for(int i=0;i<B.size();i++)
+        {
+            A[i][j]=A[i][j]/255; //(B[i][j]-min)/(max-min);
+            //if(max==min)
+              //  A[i][j]=B[i][j];
+
         }
     }
 }

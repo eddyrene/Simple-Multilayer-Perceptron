@@ -6,19 +6,23 @@ using namespace std;
 
 int main()
 {
-    vector<int> hidden; hidden.push_back(8);hidden.push_back(6);//hidden.push_back(4);
+    vector<int> hidden; hidden.push_back(30);//;hidden.push_back(15);hidden.push_back(15);//hidden.push_back(4);
     //Network * my_net = new Network(3,4,8,3);
-    Network * my_net = new Network(4,4,hidden,3);
+   // Network * my_net = new Network(4,4,hidden,3);
+    Network * my_net = new Network(3,784,hidden,10);
     my_net->printVector("imprimiendo pesos", my_net->getVectorOrders());
     vector< vector<double >> inputs, outputs, IN;
-    int Es=120;
-    my_net->loadDataFlowers("irisTraining.txt", Es, inputs, outputs);
-    my_net->normalize(IN, inputs);
-    my_net->printMat("Entrada normalizada \n ", IN);
+    int Es=60000;
+    //my_net->loadDataNumbers("trainig2.txt", Es, inputs, outputs);
+    my_net->loadDataNumbers("/home/mica/mnist_train.csv", Es, inputs, outputs);
+    //my_net->loadDataFlowers("irisTraining.txt", Es, inputs, outputs);
+   // my_net->normalizeIMG(IN, inputs);
+    IN=inputs;
+    //my_net->printMat("Entrada normalizada \n ",IN);
     vector<double> FinalErrors;
     int times=0;
     bool flag =true;
-    while((flag==true) && (times <6000))
+    while((flag==true) && (times <1000))
     {
         cout<<"###########################"<< times <<"#################################"""<<endl;
         FinalErrors.clear();
@@ -33,7 +37,10 @@ int main()
             delta=my_net->sumSquareError();
             //cout<<"SumsquareError de la capa:"<<delta<<endl;
             if(delta>0.000001)
+            {
+                //cout<<"entra"<<endl;
                 my_net->backpropagation();
+            }
             //my_net->forward();
             FinalErrors.push_back(delta);
             era++;
@@ -46,22 +53,25 @@ int main()
         }
         //cout<<" solo la sumatoria  "<< sum <<" El tamño del vector"<<FinalErrors.size()<<endl;
         sum = sum / FinalErrors.size();
-        if(sum < 0.001)
+        if(sum < 0.01)
             flag=false;
         cout<<"*********acumulado MENOR AL FLAG **** \n "<<sum<<endl;
         times++;
    }
     cout<<"%%%%%%%%%%%%%%%%%% TEST %%%%%%%%%%%%%%"<<endl;
-    int Test =30;
+    int Test =10;
     vector< vector<double >> I, O, NIT;
-    my_net->loadDataFlowers("irisTest.txt", Test, I, O);
-    my_net->normalize(NIT, I);
+    //my_net->loadDataFlowers("irisTest.txt", Test, I, O);
+    my_net->loadDataNumbers("test2.txt", Test, I, O);
+    NIT=I;
+    //my_net->normalizeIMG(NIT, I);
     my_net->printMat("\n Entrada: \n", NIT);
     my_net->printMat("\n Salidas: \n", O);
     for(int i=0 ;i<Test; i++)
     {
          my_net->testSet(NIT[i],O[i]);
     }
+    delete my_net;
 }
 
 

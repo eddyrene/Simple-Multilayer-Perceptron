@@ -6,7 +6,26 @@ using namespace std;
 
 int main()
 {
-    vector<int> hidden; hidden.push_back(30);//;hidden.push_back(15);hidden.push_back(15);//hidden.push_back(4);
+/*
+    mat * A= new mat(1,5,fill::ones);
+    *A *= 3;
+
+
+    mat * C = new mat(1,5,fill::ones);
+    *C *= 4;
+    mat * D = new mat((*A) % (*C));
+
+
+    cout<<*(A)<<endl;
+    cout<<*(D)<<endl;
+    delete [] A;
+
+    cout<< (A)<<endl;
+*/
+
+
+
+    vector<int> hidden; hidden.push_back(20);//;hidden.push_back(15);hidden.push_back(15);//hidden.push_back(4);
     //Network * my_net = new Network(3,4,8,3);
    // Network * my_net = new Network(4,4,hidden,3);
     Network * my_net = new Network(3,784,hidden,10);
@@ -14,7 +33,7 @@ int main()
     vector< vector<double >> inputs, outputs, IN;
     int Es=60000;
     //my_net->loadDataNumbers("trainig2.txt", Es, inputs, outputs);
-    my_net->loadDataNumbers("/home/mica/mnist_train.csv", Es, inputs, outputs);
+    my_net->loadDataNumbers("/home/cs30/Desktop/mi/mnist_train.csv", Es, inputs, outputs);
     //my_net->loadDataFlowers("irisTraining.txt", Es, inputs, outputs);
    // my_net->normalizeIMG(IN, inputs);
     IN=inputs;
@@ -22,7 +41,7 @@ int main()
     vector<double> FinalErrors;
     int times=0;
     bool flag =true;
-    while((flag==true) && (times <1000))
+    while((flag==true) && (times <100))
     {
         cout<<"###########################"<< times <<"#################################"""<<endl;
         FinalErrors.clear();
@@ -53,20 +72,20 @@ int main()
         }
         //cout<<" solo la sumatoria  "<< sum <<" El tamño del vector"<<FinalErrors.size()<<endl;
         sum = sum / FinalErrors.size();
-        if(sum < 0.01)
+        if(sum < 0.9)
             flag=false;
         cout<<"*********acumulado MENOR AL FLAG **** \n "<<sum<<endl;
         times++;
    }
     cout<<"%%%%%%%%%%%%%%%%%% TEST %%%%%%%%%%%%%%"<<endl;
-    int Test =10;
+    int Test =10000;
     vector< vector<double >> I, O, NIT;
     //my_net->loadDataFlowers("irisTest.txt", Test, I, O);
-    my_net->loadDataNumbers("test2.txt", Test, I, O);
+    my_net->loadDataNumbers("/home/cs30/Desktop/mi/mnist_test.csv", Test, I, O);
     NIT=I;
     //my_net->normalizeIMG(NIT, I);
-    my_net->printMat("\n Entrada: \n", NIT);
-    my_net->printMat("\n Salidas: \n", O);
+   // my_net->printMat("\n Entrada: \n", NIT);
+   // my_net->printMat("\n Salidas: \n", O);
     for(int i=0 ;i<Test; i++)
     {
          my_net->testSet(NIT[i],O[i]);

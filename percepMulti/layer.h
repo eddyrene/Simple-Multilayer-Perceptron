@@ -1,7 +1,5 @@
 #ifndef LAYER_H
 #define LAYER_H
-#include "neuron.h"
-//#include "weight.h"
 #include <vector>
 
 #include<armadillo>
@@ -12,7 +10,8 @@ using namespace arma;
 class Layer
 {
     private:
-        vector<Neuron *> * vectNeuron;
+        //vector<Neuron *> * vectNeuron;
+        mat * vectdNeuron;
         mat * pMat;
         int size;
         int mfil,mcol;
@@ -31,7 +30,7 @@ class Layer
         void setMatError(mat *m);
         mat * getWeightBias();
         void binarizacion();
-        vector<Neuron *> * getVectNeuron();
+        mat * getVectNeuron();
 };
 
 #endif // LAYER_H

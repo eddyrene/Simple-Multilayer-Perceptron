@@ -22,7 +22,7 @@ public:
     void fill();
     void init(vector<double> input, vector<double> expected , double err);
     void init2(vector<double> input, double expected , double err);
-    mat * derVectNeuron(vector<Neuron *> * v );
+    mat * derVectNeuron(mat * v );
     void printVector(string a, vector<double> t);
     void printMat(string a, vector<vector<double> > M);
     void forward();
@@ -32,8 +32,8 @@ public:
     void printAll();
     vector<double> getVectorOrders();
     vector<Layer*> * getVectorLayers();
-    mat * vectNeurontoMatrix( vector<Neuron *> * v );
-    void matrixtoVectNeuron(mat *c, vector<Neuron *> * v);
+    //mat * vectNeurontoMatrix( vector<Neuron *> * v );
+    //void matrixtoVectNeuron(mat *c, vector<Neuron *> * v);
     void printWeight();
     double sumSquareError();
     double getThreshold(){return threshold;}

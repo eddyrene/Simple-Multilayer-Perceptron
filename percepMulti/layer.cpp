@@ -2,16 +2,17 @@
 
 Layer::Layer()
 {
-       vectNeuron = NULL;
+       vectdNeuron = NULL;
 }
 
 Layer::Layer(int tam)
 {
     //pWeight= new Weight();
     size=tam;
-    vectNeuron = new vector<Neuron *> ();
+    //vectNeuron = new vector<Neuron *> ();
+    vectdNeuron = new mat(1,size,fill::ones);
     //cout<<"tam : "<<tam<<endl;
-    vectNeuron->resize(size);
+    //vectNeuron->resize(size);
     pMat = new mat(0,0,fill::randu);
     mcol=mfil=0;
     matError = new mat(1,size-1,fill::zeros);
@@ -26,54 +27,30 @@ int Layer::getSize()
 void Layer::sigmod()
 {
     //cout<<"\n se activo \n "<<endl;
-    for(int i =0; i<vectNeuron->size();i++ )
+    vectdNeuron->at(0) =1;
+    for(int i=1 ; i<vectdNeuron->n_cols;i++)
     {
         float exp_value;
         float return_value;
-        double x = vectNeuron->at(i)->getVal();
+        double x = vectdNeuron->at(i);
         exp_value = exp((double) -x);
-        /*** Final sigmoid value ***/
         return_value = 1 / (1 + exp_value);
-        vectNeuron->at(i)->setVal(return_value);
-        vectNeuron->at(0)->setVal(1);
-       // cout<<vectNeuron->at(i)->getVal()<<"  ";
+        vectdNeuron->at(i) = return_value;
     }
-}
-
-void Layer::sigmod2()
-{
-    //cout<<"\n se activo \n "<<endl;
-    for(int i =0; i<vectNeuron->size();i++ )
-    {
-        float exp_value;
-        float return_value;
-        double x = vectNeuron->at(i)->getVal();
-        exp_value = exp((double) -x);
-        /*** Final sigmoid value ***/
-        return_value = 1 / (1 + exp_value);
-        vectNeuron->at(i)->setVal(return_value);
-        vectNeuron->at(0)->setVal(1);
-        cout<<vectNeuron->at(i)->getVal()<<"  ";
-    }
-
-
-    cout<<endl;
 }
 void Layer::binarizacion()
 {
-    for(int i =0; i<vectNeuron->size();i++ )
+    for(int i =0; i<vectdNeuron->n_cols;i++ )
     {
-        double x = vectNeuron->at(i)->getVal();
+        double x = vectdNeuron->at(i);
         if(x>= 0.5)
-            vectNeuron->at(i)->setVal(1);
+            vectdNeuron->at(i)=1;
         else
-            vectNeuron->at(i)->setVal(0);
-        cout<<vectNeuron->at(i)->getVal()<<"  ";
+            vectdNeuron->at(i)=0;
+        cout<<vectdNeuron->at(i)<<"  ";
     }
     cout<<"se binarizo"<<endl;
 }
-
-
 mat * Layer::getMat()
 {
     return pMat;
@@ -107,8 +84,7 @@ mat *Layer::getWeightBias()
     return weightBias;
 }
 
-
-vector<Neuron *> *Layer::getVectNeuron()
+mat *Layer::getVectNeuron()
 {
-    return vectNeuron;
+    return vectdNeuron;
 }
